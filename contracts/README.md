@@ -1,4 +1,4 @@
-# Native Thesis contracts
+# Native Syzygy contracts
 
 Neutral types exchanged by the runtime's provider and session implementations.
 

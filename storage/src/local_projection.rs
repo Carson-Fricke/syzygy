@@ -51,7 +51,7 @@ pub fn replace_projection(path: &Path, data: &[u8]) -> io::Result<()> {
     }
     let (temporary, mut file) = loop {
         let sequence = NEXT_TEMPORARY.fetch_add(1, Ordering::Relaxed);
-        let name = format!(".thesis-{}-{sequence}.tmp", std::process::id());
+        let name = format!(".syzygy-{}-{sequence}.tmp", std::process::id());
         let temporary = parent.join(name);
         match create.open(&temporary) {
             Ok(file) => break (temporary, file),

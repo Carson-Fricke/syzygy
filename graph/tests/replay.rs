@@ -1,5 +1,5 @@
 use indexmap::IndexMap;
-use thesis_workflow_graph::{AcceptedCompletion, Destination, Node, Outcome, Topology, replay};
+use syzygy_workflow_graph::{AcceptedCompletion, Destination, Node, Outcome, Topology, replay};
 
 fn activity(name: &str, route: &str, targets: &[(&str, &str)]) -> Node {
     Node {

@@ -1,6 +1,6 @@
 //! Drive an authored deterministic phase through its host ports.
 
-pub use thesis_workflow_graph::{
+pub use syzygy_workflow_graph::{
     AcceptedCompletion, Destination, Graph, GraphError, Node, Outcome, PendingInputs, Position,
     Topology, accept_transition, replay, validate_topology,
 };

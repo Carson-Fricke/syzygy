@@ -3,7 +3,7 @@
 use std::{collections::BTreeMap, fmt, mem};
 
 use serde_json::{Map, Value, json};
-use thesis_runtime_contracts::{OutputChannel, OutputDelta};
+use syzygy_runtime_contracts::{OutputChannel, OutputDelta};
 
 use crate::reasoning::{Reasoning, display_text};
 

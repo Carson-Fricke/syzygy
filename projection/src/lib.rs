@@ -6,7 +6,7 @@
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 
-use thesis_runtime_contracts::ToolCorrelation;
+use syzygy_runtime_contracts::ToolCorrelation;
 
 mod completion;
 mod reasoning;

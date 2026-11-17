@@ -215,15 +215,15 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
- "thesis-provider-projection",
- "thesis-runtime-contracts",
- "thesis-runtime-storage",
- "thesis-session-inbox",
- "thesis-session-policy",
- "thesis-subagent-tree",
- "thesis-tool-dispatch",
- "thesis-worker-execution",
- "thesis-workflow-graph",
+ "syzygy-provider-projection",
+ "syzygy-runtime-contracts",
+ "syzygy-runtime-storage",
+ "syzygy-session-inbox",
+ "syzygy-session-policy",
+ "syzygy-subagent-tree",
+ "syzygy-tool-dispatch",
+ "syzygy-worker-execution",
+ "syzygy-workflow-graph",
 ]
 
 [[package]]
@@ -300,15 +300,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "thesis-provider-projection"
+name = "syzygy-provider-projection"
 version = "0.1.0"
 dependencies = [
  "serde_json",
- "thesis-runtime-contracts",
+ "syzygy-runtime-contracts",
 ]
 
 [[package]]
-name = "thesis-runtime-contracts"
+name = "syzygy-runtime-contracts"
 version = "0.1.0"
 dependencies = [
  "indexmap",
@@ -316,7 +316,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "thesis-runtime-storage"
+name = "syzygy-runtime-storage"
 version = "0.1.0"
 dependencies = [
  "base64",
@@ -326,22 +326,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "thesis-session-inbox"
+name = "syzygy-session-inbox"
 version = "0.1.0"
 
 [[package]]
-name = "thesis-session-policy"
+name = "syzygy-session-policy"
 version = "0.1.0"
 dependencies = [
- "thesis-runtime-contracts",
+ "syzygy-runtime-contracts",
 ]
 
 [[package]]
-name = "thesis-subagent-tree"
+name = "syzygy-subagent-tree"
 version = "0.1.0"
 
 [[package]]
-name = "thesis-tool-dispatch"
+name = "syzygy-tool-dispatch"
 version = "0.1.0"
 dependencies = [
  "indexmap",
@@ -351,14 +351,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "thesis-worker-execution"
+name = "syzygy-worker-execution"
 version = "0.1.0"
 dependencies = [
  "indexmap",
 ]
 
 [[package]]
-name = "thesis-workflow-graph"
+name = "syzygy-workflow-graph"
 version = "0.1.0"
 dependencies = [
  "indexmap",

@@ -1,9 +1,9 @@
 [package]
-name = "thesis-provider-projection"
+name = "syzygy-provider-projection"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
 serde_json = { workspace = true, features = ["arbitrary_precision", "preserve_order"] }
-thesis-runtime-contracts = { path = "../contracts" }
+syzygy-runtime-contracts = { path = "../contracts" }

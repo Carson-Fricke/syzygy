@@ -1,4 +1,4 @@
-use thesis_session_inbox::{TurnState, Wake};
+use syzygy_session_inbox::{TurnState, Wake};
 
 #[test]
 fn stale_wakes_stay_retired_after_the_recent_window_rolls_over() {

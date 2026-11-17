@@ -3,7 +3,7 @@
 
 use std::collections::VecDeque;
 
-use thesis_runtime_contracts::OutputChannel;
+use syzygy_runtime_contracts::OutputChannel;
 
 fn index(channel: OutputChannel) -> usize {
     match channel {

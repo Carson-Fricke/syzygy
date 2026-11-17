@@ -8,7 +8,7 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use thesis_runtime_storage::{document_identity, replace_projection};
+use syzygy_runtime_storage::{document_identity, replace_projection};
 
 use super::{
     CallbackError, CallbackProtocolError, CallbackRequest, JsonObject, UnknownOutcome,

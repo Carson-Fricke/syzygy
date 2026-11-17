@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use thesis_worker_execution::{Candidate, ReadyQueue};
+use syzygy_worker_execution::{Candidate, ReadyQueue};
 
 fn work(
     key: &str,

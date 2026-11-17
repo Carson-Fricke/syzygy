@@ -1,5 +1,5 @@
 [package]
-name = "thesis-subagent-tree"
+name = "syzygy-subagent-tree"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true

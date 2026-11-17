@@ -7,12 +7,12 @@ rust-version.workspace = true
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
-thesis-provider-projection = { path = "../projection" }
-thesis-runtime-contracts = { path = "../contracts" }
-thesis-runtime-storage = { path = "../storage" }
-thesis-session-inbox = { path = "../inbox" }
-thesis-session-policy = { path = "../sessions" }
-thesis-subagent-tree = { path = "../subagents" }
-thesis-tool-dispatch = { path = "../tools" }
-thesis-worker-execution = { path = "../execution" }
-thesis-workflow-graph = { path = "../graph" }
+syzygy-provider-projection = { path = "../projection" }
+syzygy-runtime-contracts = { path = "../contracts" }
+syzygy-runtime-storage = { path = "../storage" }
+syzygy-session-inbox = { path = "../inbox" }
+syzygy-session-policy = { path = "../sessions" }
+syzygy-subagent-tree = { path = "../subagents" }
+syzygy-tool-dispatch = { path = "../tools" }
+syzygy-worker-execution = { path = "../execution" }
+syzygy-workflow-graph = { path = "../graph" }
