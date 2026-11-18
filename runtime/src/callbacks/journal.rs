@@ -1,14 +1,13 @@
 //! Retain effectful invocation identities before dispatch and join durable replies.
 
 use std::{
-    fs::{self, OpenOptions},
-    io::{self, Write},
+    fs, io,
     path::{Path, PathBuf},
 };
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use syzygy_runtime_storage::{document_identity, replace_projection};
+use syzygy_runtime_storage::{create_projection, document_identity, replace_projection};
 
 use super::{
     CallbackError, CallbackProtocolError, CallbackRequest, JsonObject, UnknownOutcome,
@@ -132,7 +131,13 @@ impl FileInvocationJournal {
     }
 
     fn admission(&self, request: &CallbackRequest, claim: &Path) -> io::Result<Admission> {
-        let retained: Value = serde_json::from_slice(&fs::read(claim)?)?;
+        let retained: Value = match serde_json::from_slice(&fs::read(claim)?) {
+            Ok(retained) => retained,
+            // Older writers created the public file before writing its bytes.
+            // Its input and any external outcome must be reconciled by the host.
+            Err(error) if error.is_eof() => return Ok(Admission::Pending),
+            Err(error) => return Err(error.into()),
+        };
         if retained != serde_json::to_value(request)? {
             return Ok(Admission::Conflict);
         }
@@ -149,16 +154,13 @@ impl InvocationJournal for FileInvocationJournal {
         fs::create_dir_all(&self.directory)?;
         let claim = self.path(request, "claim");
         let payload = serde_json::to_vec(request)?;
-        let mut file = match OpenOptions::new().write(true).create_new(true).open(&claim) {
-            Ok(file) => file,
+        match create_projection(&claim, &payload) {
+            Ok(()) => Ok(Admission::New),
             Err(error) if error.kind() == io::ErrorKind::AlreadyExists => {
-                return self.admission(request, &claim);
+                self.admission(request, &claim)
             }
-            Err(error) => return Err(error),
-        };
-        file.write_all(&payload)?;
-        file.sync_all()?;
-        Ok(Admission::New)
+            Err(error) => Err(error),
+        }
     }
 
     fn finish(&self, request: &CallbackRequest, reply: &RecordedReply) -> io::Result<()> {

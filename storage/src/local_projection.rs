@@ -41,6 +41,20 @@ pub fn projection_parent(path: &Path) -> &Path {
 }
 
 pub fn replace_projection(path: &Path, data: &[u8]) -> io::Result<()> {
+    publish(path, data, |temporary, path| fs::rename(temporary, path))
+}
+
+/// Publish a fully written file under an exclusive name. Concurrent readers
+/// never observe a partial record. Existing records are never overwritten.
+pub fn create_projection(path: &Path, data: &[u8]) -> io::Result<()> {
+    publish(path, data, |temporary, path| fs::hard_link(temporary, path))
+}
+
+fn publish(
+    path: &Path,
+    data: &[u8],
+    install: impl FnOnce(&Path, &Path) -> io::Result<()>,
+) -> io::Result<()> {
     let parent = projection_parent(path);
     let mut create = OpenOptions::new();
     create.write(true).create_new(true);
@@ -62,11 +76,9 @@ pub fn replace_projection(path: &Path, data: &[u8]) -> io::Result<()> {
 
     let written = file.write_all(data).and_then(|()| file.sync_all());
     drop(file);
-    let replaced = written.and_then(|()| fs::rename(&temporary, path));
-    if replaced.is_err() {
-        let _ = fs::remove_file(&temporary);
-    }
-    replaced?;
+    let installed = written.and_then(|()| install(&temporary, path));
+    let _ = fs::remove_file(&temporary);
+    installed?;
     sync_parent(parent)
 }
 

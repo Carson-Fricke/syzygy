@@ -2,8 +2,11 @@
 
 The `runtime` Rust crate exposes the portable workflow graph, callback execution,
 inbox, contracts, provider projection, scheduling, tool policy, and storage
-policies. Its dependency graph uses Rust crates. Hosts compose persistence,
-workers, and provider transports around these APIs.
+policies. The `conversation` module defines agent profiles, timeline events,
+tool claims, and the provider and storage interfaces used to run a turn.
+Enable the `sqlite` feature for the local conversation store, `responses` for
+ChatGPT subscriptions, and `openrouter` for OpenRouter. Hosts can enable both
+providers and select a profile independently for each agent.
 
 ## Workflow callbacks
 

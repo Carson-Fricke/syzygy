@@ -3,7 +3,12 @@
 pub mod callbacks;
 pub mod workflows;
 
+pub use syzygy_conversation as conversation;
+#[cfg(feature = "openrouter")]
+pub use syzygy_openrouter as openrouter;
 pub use syzygy_provider_projection as projection;
+#[cfg(feature = "responses")]
+pub use syzygy_responses as responses;
 pub use syzygy_runtime_contracts as contracts;
 pub use syzygy_runtime_storage as storage;
 pub use syzygy_session_inbox as inbox;

@@ -1,0 +1,344 @@
+{
+  "codex_version": "codex-cli 0.169.0-alpha.11.1",
+  "requests": [
+    {
+      "model": "gpt-5.4",
+      "stream": true,
+      "store": false,
+      "tool_choice": "auto",
+      "parallel_tool_calls": true,
+      "reasoning": {
+        "effort": "medium",
+        "summary": "auto"
+      },
+      "tools": [
+        {
+          "type": "namespace",
+          "name": "research",
+          "description": "Read retained research results",
+          "tools": [
+            {
+              "type": "function",
+              "name": "read_trial",
+              "description": "Read a trial result",
+              "strict": false,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "trial": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "trial"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ]
+        }
+      ],
+      "input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Read the result for trial-7."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "model": "gpt-5.4",
+      "stream": true,
+      "store": false,
+      "tool_choice": "auto",
+      "parallel_tool_calls": true,
+      "reasoning": {
+        "effort": "medium",
+        "summary": "auto"
+      },
+      "tools": [
+        {
+          "type": "namespace",
+          "name": "research",
+          "description": "Read retained research results",
+          "tools": [
+            {
+              "type": "function",
+              "name": "read_trial",
+              "description": "Read a trial result",
+              "strict": false,
+              "parameters": {
+                "type": "object",
+                "properties": {
+                  "trial": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "trial"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ]
+        }
+      ],
+      "input": [
+        {
+          "type": "message",
+          "role": "user",
+          "content": [
+            {
+              "type": "input_text",
+              "text": "Read the result for trial-7."
+            }
+          ]
+        },
+        {
+          "type": "reasoning",
+          "id": "rs_fixture",
+          "summary": [
+            {
+              "type": "summary_text",
+              "text": "Looking up the trial."
+            }
+          ],
+          "encrypted_content": "c3ludGhldGljLWZpeHR1cmU"
+        },
+        {
+          "type": "function_call",
+          "id": "fc_fixture",
+          "name": "read_trial",
+          "namespace": "research",
+          "arguments": "{\"trial\":\"trial-7\"}",
+          "call_id": "call_fixture"
+        },
+        {
+          "type": "function_call_output",
+          "call_id": "call_fixture",
+          "output": "{\"passed\":true}"
+        }
+      ]
+    }
+  ],
+  "streams": [
+    [
+      {
+        "type": "response.created",
+        "response": {
+          "id": "resp_one"
+        }
+      },
+      {
+        "type": "response.output_item.added",
+        "output_index": 0,
+        "item": {
+          "type": "reasoning",
+          "id": "rs_fixture",
+          "summary": [],
+          "encrypted_content": "c3ludGhldGljLWZpeHR1cmU"
+        }
+      },
+      {
+        "type": "response.reasoning_summary_part.added",
+        "item_id": "rs_fixture",
+        "output_index": 0,
+        "part": {
+          "type": "summary_text",
+          "text": ""
+        },
+        "summary_index": 0
+      },
+      {
+        "type": "response.reasoning_summary_text.delta",
+        "item_id": "rs_fixture",
+        "output_index": 0,
+        "summary_index": 0,
+        "delta": "Looking up the trial."
+      },
+      {
+        "type": "response.output_item.done",
+        "output_index": 0,
+        "item": {
+          "type": "reasoning",
+          "id": "rs_fixture",
+          "summary": [
+            {
+              "type": "summary_text",
+              "text": "Looking up the trial."
+            }
+          ],
+          "encrypted_content": "c3ludGhldGljLWZpeHR1cmU"
+        }
+      },
+      {
+        "type": "response.output_item.added",
+        "output_index": 1,
+        "item": {
+          "type": "function_call",
+          "id": "fc_fixture",
+          "call_id": "call_fixture",
+          "namespace": "research",
+          "name": "read_trial",
+          "arguments": ""
+        }
+      },
+      {
+        "type": "response.function_call_arguments.delta",
+        "output_index": 1,
+        "item_id": "fc_fixture",
+        "delta": "{\"trial\":"
+      },
+      {
+        "type": "response.function_call_arguments.delta",
+        "output_index": 1,
+        "item_id": "fc_fixture",
+        "delta": "\"trial-7\"}"
+      },
+      {
+        "type": "response.function_call_arguments.done",
+        "output_index": 1,
+        "item_id": "fc_fixture",
+        "arguments": "{\"trial\":\"trial-7\"}"
+      },
+      {
+        "type": "response.output_item.done",
+        "output_index": 1,
+        "item": {
+          "type": "function_call",
+          "id": "fc_fixture",
+          "call_id": "call_fixture",
+          "namespace": "research",
+          "name": "read_trial",
+          "arguments": "{\"trial\":\"trial-7\"}"
+        }
+      },
+      {
+        "type": "response.completed",
+        "response": {
+          "id": "resp_one",
+          "output": [
+            {
+              "type": "reasoning",
+              "id": "rs_fixture",
+              "summary": [
+                {
+                  "type": "summary_text",
+                  "text": "Looking up the trial."
+                }
+              ],
+              "encrypted_content": "c3ludGhldGljLWZpeHR1cmU"
+            },
+            {
+              "type": "function_call",
+              "id": "fc_fixture",
+              "call_id": "call_fixture",
+              "namespace": "research",
+              "name": "read_trial",
+              "arguments": "{\"trial\":\"trial-7\"}"
+            }
+          ],
+          "usage": {
+            "input_tokens": 42,
+            "output_tokens": 11,
+            "total_tokens": 53,
+            "input_tokens_details": {
+              "cached_tokens": 12
+            },
+            "output_tokens_details": {
+              "reasoning_tokens": 4
+            }
+          }
+        }
+      }
+    ],
+    [
+      {
+        "type": "response.created",
+        "response": {
+          "id": "resp_two"
+        }
+      },
+      {
+        "type": "response.output_item.added",
+        "output_index": 0,
+        "item": {
+          "type": "message",
+          "id": "msg_fixture",
+          "role": "assistant",
+          "content": []
+        }
+      },
+      {
+        "type": "response.output_text.delta",
+        "output_index": 0,
+        "content_index": 0,
+        "item_id": "msg_fixture",
+        "delta": "Trial seven "
+      },
+      {
+        "type": "response.output_text.delta",
+        "output_index": 0,
+        "content_index": 0,
+        "item_id": "msg_fixture",
+        "delta": "passed."
+      },
+      {
+        "type": "response.output_item.done",
+        "output_index": 0,
+        "item": {
+          "type": "message",
+          "id": "msg_fixture",
+          "role": "assistant",
+          "content": [
+            {
+              "type": "output_text",
+              "text": "Trial seven passed.",
+              "annotations": []
+            }
+          ]
+        }
+      },
+      {
+        "type": "response.completed",
+        "response": {
+          "id": "resp_two",
+          "output": [
+            {
+              "type": "message",
+              "id": "msg_fixture",
+              "role": "assistant",
+              "content": [
+                {
+                  "type": "output_text",
+                  "text": "Trial seven passed.",
+                  "annotations": []
+                }
+              ]
+            }
+          ],
+          "usage": {
+            "input_tokens": 42,
+            "output_tokens": 11,
+            "total_tokens": 53,
+            "input_tokens_details": {
+              "cached_tokens": 12
+            },
+            "output_tokens_details": {
+              "reasoning_tokens": 4
+            }
+          }
+        }
+      }
+    ]
+  ],
+  "text_deltas": [
+    "Trial seven ",
+    "passed."
+  ]
+}

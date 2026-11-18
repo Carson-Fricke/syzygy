@@ -1,5 +1,5 @@
 [workspace]
-members = ["runtime", "contracts", "graph", "projection", "inbox", "execution", "subagents", "sessions", "tools", "storage"]
+members = ["runtime", "contracts", "graph", "projection", "inbox", "execution", "subagents", "sessions", "tools", "storage", "conversation", "responses", "openrouter", "app"]
 resolver = "3"
 
 [workspace.package]

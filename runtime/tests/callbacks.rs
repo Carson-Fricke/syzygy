@@ -6,13 +6,66 @@ use std::{
 };
 
 use runtime::callbacks::{
-    CallbackCommand, CallbackError, CallbackProtocolError, CallbackRequest, FileInvocationJournal,
-    JournaledCallback, ProcessCallback, UnknownOutcome, WorkflowCallback,
+    Admission, CallbackCommand, CallbackError, CallbackProtocolError, CallbackRequest,
+    FileInvocationJournal, InvocationJournal, JournaledCallback, ProcessCallback, UnknownOutcome,
+    WorkflowCallback,
 };
 use runtime::workflows::{PhaseExecution, execute_deterministic};
 use serde_json::{Map, json};
 
 struct Fixture(PathBuf);
+
+#[test]
+fn concurrent_claimants_see_one_complete_claim_and_never_repeat_a_legacy_unknown() {
+    use std::sync::Barrier;
+    let directory = Fixture(env::temp_dir().join(format!(
+            "syzygy-claim-{}-{:?}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(SystemTime::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        )));
+    fs::create_dir(&directory.0).unwrap();
+    let journal = FileInvocationJournal::new(&directory.0);
+    let request = CallbackRequest::new(
+        "once",
+        "test",
+        None,
+        Map::from_iter([("payload".into(), json!("x".repeat(65536)))]),
+    )
+    .unwrap();
+    let start = Barrier::new(8);
+    let winners = std::thread::scope(|threads| {
+        let handles: Vec<_> = (0..8)
+            .map(|_| {
+                threads.spawn(|| {
+                    start.wait();
+                    match journal.admit(&request).unwrap() {
+                        Admission::New => 1,
+                        Admission::Pending => 0,
+                        other => panic!("unexpected admission: {other:?}"),
+                    }
+                })
+            })
+            .collect();
+        handles
+            .into_iter()
+            .map(|h| h.join().unwrap())
+            .sum::<usize>()
+    });
+    assert_eq!(winners, 1);
+    let claim = directory
+        .0
+        .join(runtime::storage::document_identity("callback-", "legacy"))
+        .with_extension("claim");
+    fs::write(claim, b"{").unwrap();
+    let legacy = CallbackRequest::new("legacy", "test", None, Map::new()).unwrap();
+    assert!(matches!(
+        journal.admit(&legacy).unwrap(),
+        Admission::Pending
+    ));
+}
 
 impl Drop for Fixture {
     fn drop(&mut self) {

@@ -111,6 +111,16 @@ impl CompletionStream {
         }
         for key in ["id", "model", "provider", "usage"] {
             if let Some(value) = data.get(key).filter(|value| !value.is_null()) {
+                if key == "id"
+                    && self
+                        .metadata
+                        .get(key)
+                        .is_some_and(|previous| previous != value)
+                {
+                    return Err(StreamError::invalid(
+                        "provider stream mixed completion identities",
+                    ));
+                }
                 self.metadata.insert(key.to_owned(), value.clone());
             }
         }

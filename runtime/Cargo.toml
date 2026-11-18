@@ -4,10 +4,18 @@ version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
 
+[features]
+responses = ["dep:syzygy-responses"]
+sqlite = ["syzygy-conversation/sqlite"]
+openrouter = ["dep:syzygy-openrouter"]
+
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
+syzygy-conversation = { path = "../conversation" }
+syzygy-openrouter = { path = "../openrouter", optional = true }
 syzygy-provider-projection = { path = "../projection" }
+syzygy-responses = { path = "../responses", optional = true }
 syzygy-runtime-contracts = { path = "../contracts" }
 syzygy-runtime-storage = { path = "../storage" }
 syzygy-session-inbox = { path = "../inbox" }
