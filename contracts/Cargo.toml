@@ -1,9 +1,0 @@
-[package]
-name = "syzygy-runtime-contracts"
-version = "0.1.0"
-edition.workspace = true
-rust-version.workspace = true
-
-[dependencies]
-indexmap.workspace = true
-serde.workspace = true

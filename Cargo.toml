@@ -1,5 +1,23 @@
 [workspace]
-members = ["runtime", "contracts", "graph", "projection", "inbox", "execution", "subagents", "sessions", "tools", "storage", "conversation", "responses", "openrouter", "app"]
+members = [
+    "src/app",
+    "src/runtime/adapters/openai-responses",
+    "src/runtime/adapters/openrouter",
+    "src/runtime/adapters/shared/projection",
+    "src/runtime/adapters/sqlite",
+    "src/runtime/adapters/workspace",
+    "src/runtime/core",
+    "src/runtime/core/config",
+    "src/runtime/core/contracts",
+    "src/runtime/core/inbox",
+    "src/runtime/core/scheduling",
+    "src/runtime/core/sessions",
+    "src/runtime/core/storage",
+    "src/runtime/core/subagents",
+    "src/runtime/core/tools",
+    "src/runtime/core/turns",
+    "src/runtime/core/workflows",
+]
 resolver = "3"
 
 [workspace.package]
@@ -8,9 +26,25 @@ rust-version = "1.98"
 
 [workspace.dependencies]
 indexmap = { version = "2", features = ["serde"] }
+runtime = { path = "src/runtime/core" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
+syzygy-adapter-openai-responses = { path = "src/runtime/adapters/openai-responses" }
+syzygy-adapter-openrouter = { path = "src/runtime/adapters/openrouter" }
+syzygy-adapter-sqlite = { path = "src/runtime/adapters/sqlite" }
+syzygy-adapter-workspace = { path = "src/runtime/adapters/workspace" }
+syzygy-agent-config = { path = "src/runtime/core/config" }
+syzygy-conversation = { path = "src/runtime/core/turns" }
+syzygy-provider-projection = { path = "src/runtime/adapters/shared/projection" }
+syzygy-runtime-contracts = { path = "src/runtime/core/contracts" }
+syzygy-runtime-storage = { path = "src/runtime/core/storage" }
+syzygy-session-inbox = { path = "src/runtime/core/inbox" }
+syzygy-session-policy = { path = "src/runtime/core/sessions" }
+syzygy-subagent-tree = { path = "src/runtime/core/subagents" }
+syzygy-tool-dispatch = { path = "src/runtime/core/tools" }
+syzygy-worker-execution = { path = "src/runtime/core/scheduling" }
+syzygy-workflow-graph = { path = "src/runtime/core/workflows" }
 
 # Optimize content hashing and chunk encoding while retaining debug assertions.
 [profile.dev.package.base64]

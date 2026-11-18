@@ -1,0 +1,10 @@
+[package]
+name = "syzygy-adapter-workspace"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+serde_json.workspace = true
+syzygy-runtime-contracts.workspace = true
+tempfile = "3"

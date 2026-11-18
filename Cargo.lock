@@ -1406,10 +1406,13 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "serde_json",
+ "syzygy-adapter-openai-responses",
+ "syzygy-adapter-openrouter",
+ "syzygy-adapter-sqlite",
+ "syzygy-adapter-workspace",
+ "syzygy-agent-config",
  "syzygy-conversation",
- "syzygy-openrouter",
  "syzygy-provider-projection",
- "syzygy-responses",
  "syzygy-runtime-contracts",
  "syzygy-runtime-storage",
  "syzygy-session-inbox",
@@ -1418,7 +1421,6 @@ dependencies = [
  "syzygy-tool-dispatch",
  "syzygy-worker-execution",
  "syzygy-workflow-graph",
- "tempfile",
 ]
 
 [[package]]
@@ -1753,38 +1755,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "syzygy-conversation"
-version = "0.1.0"
-dependencies = [
- "rusqlite",
- "serde",
- "serde_json",
- "syzygy-runtime-contracts",
- "tempfile",
-]
-
-[[package]]
-name = "syzygy-openrouter"
-version = "0.1.0"
-dependencies = [
- "reqwest",
- "serde_json",
- "sha2 0.10.9",
- "syzygy-conversation",
- "syzygy-provider-projection",
- "tiny_http",
-]
-
-[[package]]
-name = "syzygy-provider-projection"
-version = "0.1.0"
-dependencies = [
- "serde_json",
- "syzygy-runtime-contracts",
-]
-
-[[package]]
-name = "syzygy-responses"
+name = "syzygy-adapter-openai-responses"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",
@@ -1794,6 +1765,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.10.9",
+ "syzygy-adapter-sqlite",
  "syzygy-conversation",
  "syzygy-provider-projection",
  "syzygy-runtime-contracts",
@@ -1805,11 +1777,68 @@ dependencies = [
 ]
 
 [[package]]
+name = "syzygy-adapter-openrouter"
+version = "0.1.0"
+dependencies = [
+ "reqwest",
+ "serde_json",
+ "sha2 0.10.9",
+ "syzygy-provider-projection",
+ "syzygy-runtime-contracts",
+ "tiny_http",
+]
+
+[[package]]
+name = "syzygy-adapter-sqlite"
+version = "0.1.0"
+dependencies = [
+ "rusqlite",
+ "serde_json",
+ "syzygy-conversation",
+ "tempfile",
+]
+
+[[package]]
+name = "syzygy-adapter-workspace"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "syzygy-runtime-contracts",
+ "tempfile",
+]
+
+[[package]]
+name = "syzygy-agent-config"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "syzygy-conversation"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "syzygy-runtime-contracts",
+]
+
+[[package]]
+name = "syzygy-provider-projection"
+version = "0.1.0"
+dependencies = [
+ "serde_json",
+ "syzygy-runtime-contracts",
+]
+
+[[package]]
 name = "syzygy-runtime-contracts"
 version = "0.1.0"
 dependencies = [
  "indexmap",
  "serde",
+ "serde_json",
 ]
 
 [[package]]

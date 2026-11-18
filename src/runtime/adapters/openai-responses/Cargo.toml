@@ -1,0 +1,27 @@
+[package]
+name = "syzygy-adapter-openai-responses"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+base64 = "0.22"
+getrandom = "0.4"
+jsonwebtoken = { version = "12", default-features = false, features = ["rust_crypto"] }
+reqwest = { version = "0.12.28", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+syzygy-provider-projection.workspace = true
+syzygy-runtime-contracts.workspace = true
+syzygy-runtime-storage.workspace = true
+tiny_http = "0.12"
+uuid = { version = "1", features = ["serde", "v4"] }
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+
+[dev-dependencies]
+syzygy-adapter-sqlite.workspace = true
+syzygy-conversation.workspace = true
+tempfile = "3"

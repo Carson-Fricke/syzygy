@@ -1,0 +1,13 @@
+[package]
+name = "syzygy-adapter-sqlite"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rusqlite = { version = "0.38", features = ["bundled"] }
+serde_json.workspace = true
+syzygy-conversation.workspace = true
+
+[dev-dependencies]
+tempfile = "3"

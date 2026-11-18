@@ -7,7 +7,7 @@ profiles. FCA embeds the same runtime and supplies its application persistence.
 ## Run the coding app
 
 ```text
-cargo install --locked --path app
+cargo install --locked --path src/app
 syzygy login
 syzygy models
 syzygy chat --model MODEL_SLUG --workspace .
@@ -57,21 +57,25 @@ or job system and record the verified result with
 
 ## Embed the runtime
 
-The [runtime](runtime/) crate provides the portable Rust workflow callback
-boundary and shared runtime policies. Its workflow graph, inbox, provider
-projection, tool policy, storage, and scheduling crates are workspace members.
-
-The [Responses adapter](responses/README.md) adds direct OpenAI Responses
-streaming, tool replay, and local Sign in with ChatGPT.
+The terminal app lives in `src/app/`. The [runtime](src/runtime/core/) exposes
+the shared execution APIs. Its core groups the model contracts, agent
+configuration, turn engine, and workflow policies. Concrete model providers,
+SQLite, and workspace tools live together in
+[`src/runtime/adapters/`](src/runtime/adapters/).
 
 The workflow callback contract supports Rust callables and local executable
-commands. See the [runtime documentation](runtime/README.md) for the JSON
+commands. See the [runtime documentation](src/runtime/core/README.md) for the JSON
 protocol, invocation retention, and timeout behavior.
 
-The `runtime::conversation` module owns ordered events, provider-independent
-turn execution and tool claims. Hosts implement its store and tool ports.
-Features `sqlite`, `responses`, and `openrouter` opt into concrete adapters.
-Enable `workspace-tools` for file listing, reading, editing, and command execution through `runtime::workspace`, with approval supplied by the host.
+Use `runtime::config::AgentCatalog` to resolve agent model profiles.
+`runtime::contracts::model` defines the shared provider and tool interface.
+`runtime::conversation` drives ordered events, turn execution, and tool claims.
+Hosts implement its storage and tool execution ports.
+Features `responses` and `openrouter` expose their provider crates through
+`runtime::responses` and `runtime::openrouter`. The `sqlite` feature exposes the
+local conversation store in `runtime::sqlite`. The `workspace-tools` feature exposes file listing,
+reading, editing, and command execution through `runtime::workspace`, with
+approval supplied by the host.
 
 Run the workspace checks from this repository root.
 

@@ -1,8 +1,0 @@
-[package]
-name = "syzygy-session-policy"
-version = "0.1.0"
-edition.workspace = true
-rust-version.workspace = true
-
-[dependencies]
-syzygy-runtime-contracts = { path = "../contracts" }

@@ -1,0 +1,30 @@
+[package]
+name = "runtime"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[features]
+responses = ["dep:syzygy-adapter-openai-responses"]
+sqlite = ["dep:syzygy-adapter-sqlite"]
+openrouter = ["dep:syzygy-adapter-openrouter"]
+workspace-tools = ["dep:syzygy-adapter-workspace"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+syzygy-adapter-openai-responses = { workspace = true, optional = true }
+syzygy-adapter-openrouter = { workspace = true, optional = true }
+syzygy-adapter-sqlite = { workspace = true, optional = true }
+syzygy-adapter-workspace = { workspace = true, optional = true }
+syzygy-agent-config.workspace = true
+syzygy-conversation.workspace = true
+syzygy-provider-projection.workspace = true
+syzygy-runtime-contracts.workspace = true
+syzygy-runtime-storage.workspace = true
+syzygy-session-inbox.workspace = true
+syzygy-session-policy.workspace = true
+syzygy-subagent-tree.workspace = true
+syzygy-tool-dispatch.workspace = true
+syzygy-worker-execution.workspace = true
+syzygy-workflow-graph.workspace = true
