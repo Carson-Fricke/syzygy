@@ -1418,6 +1418,7 @@ dependencies = [
  "syzygy-tool-dispatch",
  "syzygy-worker-execution",
  "syzygy-workflow-graph",
+ "tempfile",
 ]
 
 [[package]]

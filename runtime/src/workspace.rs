@@ -1,7 +1,6 @@
-//! Approved coding operations in the workspace selected for a chat.
+//! Local coding tools. The host supplies approval for each edit and command.
 
-use runtime::conversation::{ToolCall, ToolInput, ToolOutput};
-use runtime::responses::{FunctionTool, Tool, ToolNamespace};
+use crate::conversation::{FunctionTool, Tool, ToolCall, ToolInput, ToolNamespace, ToolOutput};
 use serde_json::{Value, json};
 use std::{
     fs::{self, File},
@@ -26,6 +25,7 @@ fn function(name: &str, description: &str, properties: Value) -> Tool {
     })
 }
 
+/// The shared tool descriptions advertised to the chat's provider.
 pub fn catalog() -> ToolNamespace {
     let string = json!({"type":"string"});
     ToolNamespace {
@@ -114,17 +114,19 @@ fn string<'a>(v: &'a Value, key: &str) -> io::Result<&'a str> {
         .ok_or_else(|| invalid(&format!("expected string for {key}")))
 }
 
-/// Escape control characters in model-provided text before writing to the terminal.
-pub fn printable(input: &str) -> String {
-    let mut text = String::with_capacity(input.len());
-    for c in input.chars() {
-        if c.is_control() && c != '\n' && c != '\t' {
-            text.extend(c.escape_default());
-        } else {
-            text.push(c);
-        }
-    }
-    text
+/// A proposed change or command, presented to the host before applying its effects.
+#[derive(Debug)]
+pub enum Approval<'a> {
+    Edit {
+        path: &'a Path,
+        before: &'a str,
+        after: &'a str,
+    },
+    Command {
+        directory: &'a Path,
+        program: &'a str,
+        args: &'a [&'a str],
+    },
 }
 
 enum Failure {
@@ -138,10 +140,12 @@ impl From<io::Error> for Failure {
     }
 }
 
+/// Execute one admitted call in the canonical workspace directory recorded by the
+/// host. An error indicates an uncertain effect that must be reconciled before resuming.
 pub fn execute(
     root: &Path,
     call: &ToolCall,
-    approve: &mut impl FnMut(&str) -> io::Result<bool>,
+    approve: &mut impl FnMut(Approval<'_>) -> io::Result<bool>,
 ) -> Result<ToolOutput, String> {
     let ToolInput::Function { arguments } = &call.input else {
         return Ok(ToolOutput::Text("Unsupported tool type".into()));
@@ -166,8 +170,11 @@ fn perform(
     root: &Path,
     name: &str,
     args: &Value,
-    approve: &mut impl FnMut(&str) -> io::Result<bool>,
+    approve: &mut impl FnMut(Approval<'_>) -> io::Result<bool>,
 ) -> Result<Value, Failure> {
+    if root.canonicalize()? != root || !root.is_dir() {
+        return Err(invalid("workspace must be its original canonical directory").into());
+    }
     match name {
         "list" => {
             let path = path_in(root, string(args, "path")?, false)?;
@@ -221,12 +228,11 @@ fn perform(
                 }
                 old
             };
-            if !approve(&format!(
-                "Edit {}\nRemove {}\nInsert {}",
-                path.display(),
-                json!(before),
-                json!(after)
-            ))? {
+            if !approve(Approval::Edit {
+                path: &path,
+                before,
+                after,
+            })? {
                 return Ok(json!({"denied":true}));
             }
             let content = if before.is_empty() {
@@ -273,13 +279,15 @@ fn perform(
                         .ok_or_else(|| invalid("expected string argument"))
                 })
                 .collect::<io::Result<Vec<_>>>()?;
-            if !approve(&format!(
-                "Run in {} with your OS permissions\n{} {}",
-                root.display(),
-                json!(program),
-                json!(argv)
-            ))? {
+            if !approve(Approval::Command {
+                directory: root,
+                program,
+                args: &argv,
+            })? {
                 return Ok(json!({"denied":true}));
+            }
+            if root.canonicalize()? != root {
+                return Err(invalid("workspace directory changed since preview").into());
             }
             run_command(root, program, &argv)
         }

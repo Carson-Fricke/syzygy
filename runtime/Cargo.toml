@@ -8,10 +8,12 @@ rust-version.workspace = true
 responses = ["dep:syzygy-responses"]
 sqlite = ["syzygy-conversation/sqlite"]
 openrouter = ["dep:syzygy-openrouter"]
+workspace-tools = ["dep:tempfile"]
 
 [dependencies]
 serde.workspace = true
 serde_json.workspace = true
+tempfile = { version = "3", optional = true }
 syzygy-conversation = { path = "../conversation" }
 syzygy-openrouter = { path = "../openrouter", optional = true }
 syzygy-provider-projection = { path = "../projection" }

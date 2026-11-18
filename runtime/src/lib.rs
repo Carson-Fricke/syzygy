@@ -2,6 +2,8 @@
 
 pub mod callbacks;
 pub mod workflows;
+#[cfg(feature = "workspace-tools")]
+pub mod workspace;
 
 pub use syzygy_conversation as conversation;
 #[cfg(feature = "openrouter")]

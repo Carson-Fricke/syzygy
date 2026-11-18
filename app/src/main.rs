@@ -1,5 +1,4 @@
 //! A terminal coding harness backed by the portable conversation runtime.
-mod workspace;
 
 use clap::{Parser, Subcommand};
 use runtime::{
@@ -10,6 +9,7 @@ use runtime::{
     },
     openrouter::OpenRouter,
     responses::{AccountStore, ChatGpt, RequestOptions, ResponsesProvider},
+    workspace::{self, Approval},
 };
 use serde::{Deserialize, Serialize};
 use std::{
@@ -19,7 +19,6 @@ use std::{
     path::{Path, PathBuf},
 };
 use uuid::Uuid;
-use workspace::printable;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -273,11 +272,45 @@ fn load_binding(timeline: &Timeline<SqliteStore>, chat: &str) -> Result<Binding>
     )?)
 }
 
-fn approve(preview: &str) -> io::Result<bool> {
+fn printable(input: &str) -> String {
+    let mut text = String::with_capacity(input.len());
+    for c in input.chars() {
+        if c.is_control() && c != '\n' && c != '\t' {
+            text.extend(c.escape_default());
+        } else {
+            text.push(c);
+        }
+    }
+    text
+}
+
+fn approve(action: Approval<'_>) -> io::Result<bool> {
     if !io::stdin().is_terminal() {
         return Ok(false);
     }
-    eprint!("{}\nAllow this action? [y/N] ", printable(preview));
+    let preview = match action {
+        Approval::Edit {
+            path,
+            before,
+            after,
+        } => format!(
+            "Edit {}\nRemove {}\nInsert {}",
+            path.display(),
+            serde_json::json!(before),
+            serde_json::json!(after),
+        ),
+        Approval::Command {
+            directory,
+            program,
+            args,
+        } => format!(
+            "Run in {} with your OS permissions\n{} {}",
+            directory.display(),
+            serde_json::json!(program),
+            serde_json::json!(args),
+        ),
+    };
+    eprint!("{}\nAllow this action? [y/N] ", printable(&preview));
     io::stderr().flush()?;
     let mut answer = String::new();
     io::stdin().read_line(&mut answer)?;

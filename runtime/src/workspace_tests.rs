@@ -5,7 +5,7 @@ fn invoke(
     root: &Path,
     name: &str,
     arguments: Value,
-    mut approve: impl FnMut(&str) -> io::Result<bool>,
+    mut approve: impl FnMut(Approval<'_>) -> io::Result<bool>,
 ) -> Value {
     let call = ToolCall {
         name: name.to_owned(),
@@ -33,9 +33,18 @@ fn edit_requires_approval_respects_changed_input_and_paginates_reads() {
     );
     assert!(!file.exists());
     assert_eq!(
-        invoke(&root, "edit", create.clone(), |preview| {
-            assert!(preview.contains("hello.rs"));
-            assert!(preview.contains("first"));
+        invoke(&root, "edit", create.clone(), |action| {
+            let Approval::Edit {
+                path,
+                before,
+                after,
+            } = action
+            else {
+                panic!("expected an edit");
+            };
+            assert_eq!(path, file);
+            assert_eq!(before, "");
+            assert_eq!(after, "first\nsecond\n");
             Ok(true)
         })["written"],
         13
@@ -121,17 +130,28 @@ fn paths_and_read_budget_remain_scoped_to_the_workspace() {
 #[test]
 fn executable_and_arguments_require_approval_and_record_exit_status() {
     let tmp = tempdir().unwrap();
+    let root = tmp.path().canonicalize().unwrap();
     let command = json!({"program":"rustc","args":["--version"]});
-    let denied = invoke(tmp.path(), "command", command.clone(), |preview| {
-        assert!(preview.contains("rustc") && preview.contains("--version"));
+    let denied = invoke(&root, "command", command.clone(), |action| {
+        let Approval::Command {
+            directory,
+            program,
+            args,
+        } = action
+        else {
+            panic!("expected a command");
+        };
+        assert_eq!(directory, root);
+        assert_eq!(program, "rustc");
+        assert_eq!(args, &["--version"]);
         Ok(false)
     });
     assert_eq!(denied["denied"], true);
-    let executed = invoke(tmp.path(), "command", command, |_| Ok(true));
+    let executed = invoke(&root, "command", command, |_| Ok(true));
     assert_eq!(executed["exit_code"], 0, "{executed}");
     assert!(executed["stdout"].as_str().unwrap().contains("rustc"));
     let missing = invoke(
-        tmp.path(),
+        &root,
         "command",
         json!({"program":"nonexistent-syzygy-test-executable","args":[]}),
         |_| Ok(true),

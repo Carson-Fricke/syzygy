@@ -71,6 +71,7 @@ protocol, invocation retention, and timeout behavior.
 The `runtime::conversation` module owns ordered events, provider-independent
 turn execution and tool claims. Hosts implement its store and tool ports.
 Features `sqlite`, `responses`, and `openrouter` opt into concrete adapters.
+Enable `workspace-tools` for file listing, reading, editing, and command execution through `runtime::workspace`, with approval supplied by the host.
 
 Run the workspace checks from this repository root.
 
