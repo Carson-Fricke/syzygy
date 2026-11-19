@@ -32,6 +32,7 @@ pub struct ResponseStream {
     response_id: Option<String>,
     size: usize,
     eof: bool,
+    require_created: bool,
     request: PreparedRequest,
     connection: String,
 }
@@ -41,6 +42,7 @@ impl ResponseStream {
         source: impl Read + Send + 'static,
         request: PreparedRequest,
         connection: String,
+        require_created: bool,
     ) -> Self {
         Self {
             source: Some(Box::new(source)),
@@ -49,6 +51,7 @@ impl ResponseStream {
             response_id: None,
             size: 0,
             eof: false,
+            require_created,
             request,
             connection,
         }
@@ -121,6 +124,16 @@ impl ResponseStream {
             } else {
                 event["response_id"].as_str()
             };
+            // A missing Content-Type requires a recognizable Responses stream
+            // before any output can escape the adapter.
+            if self.require_created {
+                if kind != "response.created" || id.is_none_or(str::is_empty) {
+                    return Err(Error::Invalid(
+                        "Responses stream without a content type must start with response.created and a response ID",
+                    ));
+                }
+                self.require_created = false;
+            }
             if let Some(id) = id {
                 if self
                     .response_id
@@ -245,6 +258,7 @@ pub(crate) fn decode(
         std::io::Cursor::new(source.to_vec()),
         request.clone(),
         connection.into(),
+        false,
     )
     .finish(emit)
 }

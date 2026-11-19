@@ -176,6 +176,64 @@ fn signed_plan_session_matches_codex_http_tool_replay_and_streaming() {
 }
 
 #[test]
+fn missing_content_type_requires_a_created_event_and_a_completed_reply() {
+    let server = Server::http("127.0.0.1:0").unwrap();
+    let client = local_client(&server);
+    let issuer = client.oauth.issuer.clone();
+    let browser = Arc::new(Mutex::new(None));
+    let state = browser.clone();
+    let worker = thread::spawn(move || {
+        grant(&server, &state, &issuer, "code", false);
+        let created = json!({"type":"response.created","response":{"id":"resp_fixture"}});
+        let completed = json!({
+            "type":"response.completed",
+            "response":{
+                "id":"resp_fixture",
+                "output":[{"type":"message","role":"assistant","content":[{"type":"output_text","text":"READY"}]}]
+            }
+        });
+        let full = sse(&[created.clone(), completed.clone()]);
+        for (body, content_type) in [
+            (full.clone(), None),
+            (sse(&[created]), None),
+            (sse(&[completed]), None),
+            (r#"{"detail":"This is JSON, not a stream"}"#.into(), None),
+            (full, Some("application/json")),
+        ] {
+            let mut request = next(&server, "POST", "/v1/responses");
+            expect_bearer(&mut request, "fixture-access");
+            let mut response = Response::from_data(body.into_bytes());
+            if let Some(content_type) = content_type {
+                response =
+                    response.with_header(Header::from_bytes("Content-Type", content_type).unwrap());
+            }
+            request.respond(response).unwrap();
+        }
+    });
+    let session = client
+        .sign_in(&HostId::default(), None, |url| {
+            callback(url, &browser, false, CLIENT, 200);
+            Ok(())
+        })
+        .unwrap();
+    let options = RequestOptions::default();
+    let provider = ResponsesProvider::new(&client, &session, "gpt-6.2-sol", &options);
+    let request = provider
+        .prepare(&[ModelItem::User("Reply READY.".into())])
+        .unwrap();
+    let respond = || client.respond(&session, &request, |_| panic!("unexpected output delta"));
+
+    assert_eq!(respond().unwrap().text, "READY");
+    assert!(matches!(respond(), Err(Error::Interrupted)));
+    assert!(matches!(respond(), Err(Error::Invalid(message))
+        if message.contains("must start with response.created")));
+    assert!(matches!(respond(), Err(Error::Interrupted)));
+    assert!(matches!(respond(), Err(Error::Invalid(message))
+        if message.contains("unexpected content type")));
+    worker.join().unwrap();
+}
+
+#[test]
 fn sign_in_rejects_wrong_nonce_and_missing_plan_grant() {
     for missing_scope in [false, true] {
         let server = Server::http("127.0.0.1:0").unwrap();

@@ -201,19 +201,23 @@ impl ChatGpt {
                 .send()
                 .map_err(|_| Error::Transport)?,
         )?;
-        let media_type = response
-            .headers()
-            .get(header::CONTENT_TYPE)
-            .and_then(|value| value.to_str().ok())
-            .unwrap_or_default();
-        if !media_type
-            .split(';')
-            .next()
-            .is_some_and(|value| value.trim().eq_ignore_ascii_case("text/event-stream"))
+        let content_type = response.headers().get(header::CONTENT_TYPE);
+        let require_created = content_type.is_none();
+        if let Some(content_type) = content_type
+            && !content_type
+                .to_str()
+                .ok()
+                .and_then(|value| value.split(';').next())
+                .is_some_and(|value| value.trim().eq_ignore_ascii_case("text/event-stream"))
         {
             return Err(Error::Invalid("OpenAI returned an unexpected content type"));
         }
-        Ok(ResponseStream::new(response, request, scope))
+        Ok(ResponseStream::new(
+            response,
+            request,
+            scope,
+            require_created,
+        ))
     }
 }
 

@@ -20,6 +20,9 @@ enable the `responses` feature and use `runtime::responses`.
   to `ChatGpt::stream`. Dropping the stream closes the response. A terminal
   reply is a candidate for admission against that host's current snapshot.
   Deltas can be displayed while the response is in progress.
+- The adapter accepts a missing HTTP `Content-Type` only when the first decoded
+  SSE event is `response.created` with a response ID. It rejects explicitly
+  incompatible media types and requires `response.completed` for a reply.
 
 ## Local example
 
